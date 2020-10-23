@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {Component} from 'react';
+
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEdit, faTrash, faPlus, faThumbsUp, faThumbsDown, faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

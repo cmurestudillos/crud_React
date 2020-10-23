@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { Link } from 'react-router-dom';
 // Peticiones Http
 import axios from 'axios';
 // EndPoint
@@ -78,12 +77,7 @@ class HeroesComponent extends Component{
                 return(
                     <div>
                         <h1>Listado de Heroes</h1>
-                        <hr>
-                        <div class="row">
-                            <div class="col text-right">
-                            <Link to={`/heroe/nuevo`} className="btn btn-outline-primary" title="Alta" ><font-awesome-icon icon="plus"></font-awesome-icon>  Nuevo </Link>
-                            </div>
-                        </div>  
+                        <hr></hr>
                     </div>                   
                 )
             });

@@ -81,11 +81,11 @@ class HeroesComponent extends Component{
                 <hr></hr>
                 <div className="row">
                     <div className="col text-right">
-                        <Link to="'/heroe/nuevo'" className="btn btn-outline-primary" title="Alta"><FontAwesomeIcon icon="plus" /> Nuevo </Link>
+                        <Link to="/heroe/nuevo" className="btn btn-outline-primary" title="Alta"><FontAwesomeIcon icon="plus" /> Nuevo </Link>
                     </div>
                 </div>
 
-                {this.state.cargando !== true &&
+                {this.state.cargando === false &&
                     <table className="table mt-3">
                         <thead className="bg-custom">
                             <tr>
@@ -96,18 +96,26 @@ class HeroesComponent extends Component{
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <FontAwesomeIcon icon="thumbs-up" />
-                                    <FontAwesomeIcon icon="thumbs-down" />
-                                </td>
-                                <td className="text-center">
-                                    <Link to="'/heroe/'+ heroe.id" className="btn btn-outline-warning mr-1" title="Modificar"><FontAwesomeIcon icon="edit" /></Link>
-                                    <button className="btn btn-outline-danger" title="Eliminar"><FontAwesomeIcon icon="trash" /></button>
-                                </td>
-                            </tr>
+                            {this.state.heroes.map( (heroe) => 
+                                <tr>
+                                    <td>{heroe.nombre}</td>
+                                    <td>{heroe.poder}</td>
+                                    <td>
+                                        {heroe.estado === true &&
+                                            <FontAwesomeIcon icon="thumbs-up" className="text-success fa-2x" title="Vivo" />
+                                        }
+                                        {heroe.estado === false &&
+                                            <FontAwesomeIcon icon="thumbs-down" className="text-danger fa-2x" title="Muerto" />
+                                        }                                        
+                                    </td>
+                                    <td className="text-center">
+                                        <Link to={'/heroe/' + heroe.id} className="btn btn-outline-warning mr-1" title="Modificar"><FontAwesomeIcon icon="edit" /></Link>
+                                        <button className="btn btn-outline-danger" title="Eliminar"><FontAwesomeIcon icon="trash" /></button>
+                                    </td>
+                                </tr>                                 
+                            )
+                            }
+
                         </tbody>
                         <tfoot>
                             <tr>
@@ -117,14 +125,20 @@ class HeroesComponent extends Component{
                     </table> 
                 }
 
-                {this.state.cargando !== true && heroes !== ''
+                {this.state.cargando === false && this.state.heroes === '' &&
                     <div className="alert alert-warning text-center mt-3">
                         <h4 className="alert-heading">No hay registros</h4>
-                        <p><i className="fa fa-exclamation fa-2x"></i></p>
+                        <p><FontAwesomeIcon icon="exclamation" className="fa-2x" /></p>
                     </div>                
-
                 }
 
+                {this.state.cargando === true &&
+                    <div className="alert alert-info text-center mt-3">
+                        <h4 className="alert-heading">Cargando</h4>
+                        <p><FontAwesomeIcon icon="spinner" className="fa-2x" /></p>
+                        <p className="mb-0">Espere por favor...</p>
+                    </div>                
+                }
             </div>
         )
     }

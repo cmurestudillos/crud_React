@@ -5,3 +5,11 @@
 th{
   color: white;
 }
+
+tfoot {
+  display: table-footer-group;
+  vertical-align: middle;
+  border-color: inherit;
+  text-align: center;
+  color: white;
+}

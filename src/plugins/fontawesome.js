@@ -1,9 +1,4 @@
-import React, {Component} from 'react';
-
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEdit, faTrash, faPlus, faThumbsUp, faThumbsDown, faArrowLeft, faSave } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus, faThumbsUp, faThumbsDown, faEdit, faTrash, faExclamation } from '@fortawesome/free-solid-svg-icons'
  
-library.add(faEdit, faTrash, faPlus, faThumbsUp, faThumbsDown, faArrowLeft, faSave)
- 
-React.component('font-awesome-icon', FontAwesomeIcon)
+library.add(faPlus, faThumbsUp, faThumbsDown, faEdit, faTrash, faExclamation)

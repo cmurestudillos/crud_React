@@ -1,4 +1,7 @@
 import React, {Component} from 'react';
+import {Link} from 'react-router-dom';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // Peticiones Http
 import axios from 'axios';
 // EndPoint
@@ -72,22 +75,58 @@ class HeroesComponent extends Component{
         // Log de seguimiento
         console.log('HeroesComponent.js - Metodo render()');
 
-        if(this.state.heroes.length >= 1){
-            var listarHeroes = this.state.heroes.map( (heroe) => {
-                return(
-                    <div>
-                        <h1>Listado de Heroes</h1>
-                        <hr></hr>
-                    </div>                   
-                )
-            });
+        return (
+            <div>
+                <h1>Listado de Heroes</h1>
+                <hr></hr>
+                <div className="row">
+                    <div className="col text-right">
+                        <Link to="'/heroe/nuevo'" className="btn btn-outline-primary" title="Alta"><FontAwesomeIcon icon="plus" /> Nuevo </Link>
+                    </div>
+                </div>
 
-            return(
-                <div>
-                    {listarHeroes}
-                </div>                    
-                );
-        }
+                {this.state.cargando !== true &&
+                    <table className="table mt-3">
+                        <thead className="bg-custom">
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Poder</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col" colSpan="2" className="text-center">Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <FontAwesomeIcon icon="thumbs-up" />
+                                    <FontAwesomeIcon icon="thumbs-down" />
+                                </td>
+                                <td className="text-center">
+                                    <Link to="'/heroe/'+ heroe.id" className="btn btn-outline-warning mr-1" title="Modificar"><FontAwesomeIcon icon="edit" /></Link>
+                                    <button className="btn btn-outline-danger" title="Eliminar"><FontAwesomeIcon icon="trash" /></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colSpan="5" className="bg-custom"><span><i>Copyright© - Carlos Mur</i></span></td>
+                            </tr>
+                        </tfoot>
+                    </table> 
+                }
+
+                {this.state.cargando !== true && heroes !== ''
+                    <div className="alert alert-warning text-center mt-3">
+                        <h4 className="alert-heading">No hay registros</h4>
+                        <p><i className="fa fa-exclamation fa-2x"></i></p>
+                    </div>                
+
+                }
+
+            </div>
+        )
     }
 }
 

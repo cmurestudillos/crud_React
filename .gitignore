@@ -8,5 +8,4 @@ coverage
 build
 
 # misc
-.env
 global.js

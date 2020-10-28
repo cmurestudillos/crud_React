@@ -1,14 +1,14 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
 // Iconos
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // Peticiones Http
 import axios from 'axios';
 // EndPoint
 import global from '../../conf/global';
 // Modelo para Heroe
 import HeroeModel from '../../models/Heroe.js';
-
+// Popup
 import swal from 'sweetalert';
 
 class HeroesComponent extends Component{
@@ -71,7 +71,7 @@ class HeroesComponent extends Component{
         return heroesData;
     };
     //----------------------------------------------------------------------//
-    // Metodo borrarHeroe para obtener todos los paises                       //
+    // Metodo borrarHeroe para obtener todos los paises                     //
     //----------------------------------------------------------------------//
     borrarHeroe = (heroeId) =>{
         // Log de seguimiento

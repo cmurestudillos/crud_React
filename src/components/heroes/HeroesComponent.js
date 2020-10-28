@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Link} from 'react-router-dom';
-
+// Iconos
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 // Peticiones Http
 import axios from 'axios';
@@ -8,6 +8,8 @@ import axios from 'axios';
 import global from '../../conf/global';
 // Modelo para Heroe
 import HeroeModel from '../../models/Heroe.js';
+
+import swal from 'sweetalert';
 
 class HeroesComponent extends Component{
    // Variables
@@ -26,7 +28,7 @@ class HeroesComponent extends Component{
         this.getHeroes();
     }
     //----------------------------------------------------------------------//
-    // Metodo getPaises para obtener todos los paises                       //
+    // Metodo getHeroes para obtener todos los paises                       //
     //----------------------------------------------------------------------//
     getHeroes = () => {
         // Log de seguimiento
@@ -69,6 +71,34 @@ class HeroesComponent extends Component{
         return heroesData;
     };
     //----------------------------------------------------------------------//
+    // Metodo borrarHeroe para obtener todos los paises                       //
+    //----------------------------------------------------------------------//
+    borrarHeroe = (heroeId) =>{
+        // Log de seguimiento
+        console.log("HeroesComponent.js - Metodo borrarHeroe");
+
+        // popup de confirmacion
+        swal({
+            title: "¿Estas seguro?",
+            text: "Una vez eliminado, no podrá recuperar este archivo.",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+            })
+            .then((willDelete) => {
+                if (willDelete) {
+                    axios.delete(this.endpoint + '/heroes/' + heroeId + '.json')
+                    .then(res => {
+                        this.heroes = res.data;
+                        // Volvemos a cargar actualizada la pantalla sin el registro eliminado
+                        this.getHeroes();
+                    });
+                } else {
+                    swal("Tu archivo esta seguro.");
+                }
+        }); 
+    };     
+    //----------------------------------------------------------------------//
     // Metodo render                                                        //
     //----------------------------------------------------------------------//    
     render(){
@@ -97,7 +127,7 @@ class HeroesComponent extends Component{
                         </thead>
                         <tbody>
                             {this.state.heroes.map( (heroe) => 
-                                <tr>
+                                <tr key={heroe.id}>
                                     <td>{heroe.nombre}</td>
                                     <td>{heroe.poder}</td>
                                     <td>
@@ -110,7 +140,7 @@ class HeroesComponent extends Component{
                                     </td>
                                     <td className="text-center">
                                         <Link to={'/heroe/' + heroe.id} className="btn btn-outline-warning mr-1" title="Modificar"><FontAwesomeIcon icon="edit" /></Link>
-                                        <button className="btn btn-outline-danger" title="Eliminar"><FontAwesomeIcon icon="trash" /></button>
+                                        <button className="btn btn-outline-danger" onClick={() => this.borrarHeroe(heroe.id)} title="Eliminar"><FontAwesomeIcon icon="trash" /></button>
                                     </td>
                                 </tr>                                 
                             )

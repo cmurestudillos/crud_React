@@ -7,16 +7,21 @@ import axios from 'axios';
 // EndPoint
 import global from '../../conf/global.js';
 // Popup de alerta
-//import swal from 'sweetalert';
+import swal from 'sweetalert';
 // Modelo para Heroe
-import HeroeModel from '../../models/Heroe.js';
+//import HeroeModel from '../../models/Heroe.js';
 
 class HeroeComponent extends Component{
     // Variables
     heroeId = null;
     endpoint = global.url;
+    estadoDato = null;
+    nombreRef = React.createRef();
+    poderRef = React.createRef();    
+    estadoRef = React.createRef();
+
     state = {
-        heroe: new HeroeModel('', '', '', '')
+        heroe: {}
     };    
 
     //----------------------------------------------------------------------//
@@ -40,10 +45,77 @@ class HeroeComponent extends Component{
         axios.get(this.endpoint + "/heroes/" + heroeId + '.json')
         .then(res => {
             this.setState({
-                heroe: res.data
+                heroe: res.data,
+                estadoDato: res.data.estado
             });
         });
-    };     
+    };  
+    //----------------------------------------------------------------------------------//
+    // Metodo para cambiar el estado de boton Vivo/Muerto                               //
+    //----------------------------------------------------------------------------------//
+    cambiarEstado = () => {
+        // Log de seguimiento
+        console.log("HeroeComponent.js - Metodo cambiarEstado"); 
+
+        if(!this.state.estadoDato){
+            this.setState({
+                estadoDato: true
+            })
+        }else{
+            this.setState({
+                estadoDato: false
+            })            
+        }
+    };      
+    //----------------------------------------------------------------------------------//
+    // Metodo para guardar el registro                                                  //
+    //----------------------------------------------------------------------------------//    
+    guardar = (e) => {
+        // Log de seguimiento
+        console.log('HeroeComponent.js - Metodo guardar');
+
+        // cuando se lance el formulario, no se actualiza la pagina, bloquea la recarga 
+        e.preventDefault();
+
+        debugger
+
+        // Si el id de heroe esta relleno, actualizamos, sino escribimos
+        if(this.heroeId !== 'nuevo'){
+            axios.put(this.endpoint + '/heroes/' + this.heroeId + '.json', this.state.heroe)
+            .then( res => {
+                if(res.data){
+                    // Popup de confirmacion
+                    swal(
+                        'Heroe modificado',
+                        'El Heroe ha sido modificado correctamente.',
+                        'success'
+                    );                          
+                    // Redireccionamos a Inicio una vez guardado
+                    this.$router.push('/heroes');  
+                }
+            })
+            .catch(err => {
+                console.log(err); 
+            });
+        }else{
+            axios.post(this.endpoint + '/heroes.json', this.heroe)
+                .then( res => {
+                if(res.data){
+                    // Popup de confirmacion
+                    swal(
+                        'Heroe Creado',
+                        'El Heroe ha sido creado correctamente.',
+                        'success'
+                    );
+                    // Redireccionamos a Inicio una vez guardado
+                    this.$router.push('/heroes');                    
+                }
+            })
+            .catch(err => {
+                console.log(err); 
+            }); 
+        }
+    } 
     //----------------------------------------------------------------------//
     // Metodo render                                                        //
     //----------------------------------------------------------------------//     
@@ -74,25 +146,29 @@ class HeroeComponent extends Component{
                             {/* Id del registro */}
                             <div className="form-group">
                                 <label>Id Firebase</label>
-                                <input type="text" className="form-control" placeholder="Id Firebase" v-model="heroe.id" name="id" disabled />
+                                <input type="text" className="form-control" placeholder="Id Firebase" defaultValue={this.heroeId} name="id" disabled />
                                 <small className="form-text text-muted">Este campo se genera automaticamente.</small>
                             </div>
                             {/* Nombre */}
                             <div className="form-group">
                                 <label>Nombre</label>
-                                <input type="text" className="form-control" placeholder="Nombre" v-model="heroe.nombre" name="nombre" required />
+                                <input type="text" className="form-control" placeholder="Nombre" defaultValue={datosHeroe.nombre} ref={this.nombreRef} name="nombre" required />
                             </div>
                             {/* Poder */}
                             <div className="form-group">
                                 <label>Poder</label>
-                                <input type="text" className="form-control" placeholder="Poder" v-model="heroe.poder" name="poder" />
+                                <input type="text" className="form-control" placeholder="Poder" defaultValue={datosHeroe.poder} ref={this.poderRef} name="poder" />
                             </div>
                             {/* Estado */}
                             <div className="form-group">
                                 <label>Estado</label>
                                 <br></br>
-                                <button onClick="heroe.estado = false" className="btn btn-outline-success w-25 mr-2" type="button" title="Vivo"><FontAwesomeIcon icon="thumbs-up" title="Vivo" /> Vivo </button>   
-                                <button onClick="heroe.estado = true" className="btn btn-outline-danger w-25 ml-2" type="button" title="Muerto"><FontAwesomeIcon icon="thumbs-down" title="Muerto" /> Muerto </button>   
+                                {this.state.estadoDato &&
+                                    <button onClick={this.cambiarEstado} className="btn btn-outline-success w-25 mr-2" type="button" title="Vivo" defaultValue={datosHeroe.estado} ref={this.estadoRef}><FontAwesomeIcon icon="thumbs-up" title="Vivo" /> Vivo </button>                                   
+                                }
+                                {!this.state.estadoDato &&
+                                    <button onClick={this.cambiarEstado} className="btn btn-outline-danger w-25 ml-2" type="button" title="Muerto" defaultValue={datosHeroe.estado} ref={this.estadoRef}><FontAwesomeIcon icon="thumbs-down" title="Muerto" /> Muerto </button>
+                                }                                
                             </div>
                             <hr></hr>
                             <div className="form-group text-center">

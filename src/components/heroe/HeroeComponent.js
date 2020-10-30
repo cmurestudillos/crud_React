@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+// Enrutamiento y enlaces
+import {Link, Redirect} from 'react-router-dom';
 // Iconos
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // Peticiones Http
@@ -9,19 +10,19 @@ import global from '../../conf/global.js';
 // Popup de alerta
 import swal from 'sweetalert';
 // Modelo para Heroe
-//import HeroeModel from '../../models/Heroe.js';
+import HeroeModel from '../../models/Heroe.js';
 
 class HeroeComponent extends Component{
     // Variables
     heroeId = null;
     endpoint = global.url;
-    estadoDato = null;
     nombreRef = React.createRef();
     poderRef = React.createRef();    
     estadoRef = React.createRef();
 
     state = {
-        heroe: {}
+        heroe: new HeroeModel('', '', '', ''),
+        status: ''
     };    
 
     //----------------------------------------------------------------------//
@@ -44,11 +45,14 @@ class HeroeComponent extends Component{
 
         axios.get(this.endpoint + "/heroes/" + heroeId + '.json')
         .then(res => {
-            this.setState({
-                heroe: res.data,
-                estadoDato: res.data.estado
-            });
+            if(res.data){
+                this.setState({
+                    heroe: res.data
+                });
+            }
         });
+
+        console.log(this.state.heroe);
     };  
     //----------------------------------------------------------------------------------//
     // Metodo para cambiar el estado de boton Vivo/Muerto                               //
@@ -57,16 +61,41 @@ class HeroeComponent extends Component{
         // Log de seguimiento
         console.log("HeroeComponent.js - Metodo cambiarEstado"); 
 
-        if(!this.state.estadoDato){
+        if(!this.state.heroe.estado){
             this.setState({
-                estadoDato: true
+                heroe: {
+                    nombre: this.nombreRef.current.value,
+                    poder: this.poderRef.current.value,                    
+                    estado: true
+                }
             })
         }else{
             this.setState({
-                estadoDato: false
+                heroe: {
+                    nombre: this.nombreRef.current.value,
+                    poder: this.poderRef.current.value,                    
+                    estado: false
+                }
             })            
         }
-    };      
+    }; 
+    //----------------------------------------------------------------------------------//
+    // Metodo para modificar el state de manera dinamica                                //
+    //----------------------------------------------------------------------------------//
+    cambiarState = (heroe) => {
+        // Log de seguimiento
+        console.log("HeroeComponent.js - Metodo cambiarState"); 
+
+        this.setState({
+            heroe: {
+                nombre: this.nombreRef.current.value,
+                poder: this.poderRef.current.value,
+                estado: this.estadoRef.current.value
+            }
+        });
+
+        heroe = this.state.heroe;
+    };         
     //----------------------------------------------------------------------------------//
     // Metodo para guardar el registro                                                  //
     //----------------------------------------------------------------------------------//    
@@ -77,28 +106,30 @@ class HeroeComponent extends Component{
         // cuando se lance el formulario, no se actualiza la pagina, bloquea la recarga 
         e.preventDefault();
 
-        debugger
-
         // Si el id de heroe esta relleno, actualizamos, sino escribimos
         if(this.heroeId !== 'nuevo'){
+            // Rellena el state con los datos del formulario
+            this.cambiarState(this.state.heroe);
             axios.put(this.endpoint + '/heroes/' + this.heroeId + '.json', this.state.heroe)
             .then( res => {
                 if(res.data){
+                    this.setState({
+                        status: 'success'
+                    });    
+
                     // Popup de confirmacion
                     swal(
                         'Heroe modificado',
                         'El Heroe ha sido modificado correctamente.',
                         'success'
                     );                          
-                    // Redireccionamos a Inicio una vez guardado
-                    this.$router.push('/heroes');  
                 }
             })
             .catch(err => {
                 console.log(err); 
             });
         }else{
-            axios.post(this.endpoint + '/heroes.json', this.heroe)
+            axios.post(this.endpoint + '/heroes.json', this.state.heroe)
                 .then( res => {
                 if(res.data){
                     // Popup de confirmacion
@@ -123,15 +154,19 @@ class HeroeComponent extends Component{
         // Log de seguimiento
         console.log('HeroeComponent.js - Metodo render()');
 
-        // movemos los datos del state a una variable mas manejable
-        var datosHeroe = this.state.heroe;
+        // Redireccionamos a Inicio una vez guardado
+        if(this.state.status === 'success'){
+            return(
+                <Redirect to={'/heroes'} />
+            );
+        }
 
         return(
             <div>
-                {datosHeroe.nombre !== '' &&
-                    <h1>Heroe: <small>{datosHeroe.nombre}</small></h1>
+                {this.state.heroe.nombre !== '' &&
+                    <h1>Heroe: <small>{this.state.heroe.nombre}</small></h1>
                 }
-                {datosHeroe.nombre === '' &&
+                {this.state.heroe.nombre === '' &&
                     <h1>Heroe: <small>Nombre del heroe</small></h1>
                 }                
                 <hr></hr>
@@ -152,22 +187,22 @@ class HeroeComponent extends Component{
                             {/* Nombre */}
                             <div className="form-group">
                                 <label>Nombre</label>
-                                <input type="text" className="form-control" placeholder="Nombre" defaultValue={datosHeroe.nombre} ref={this.nombreRef} name="nombre" required />
+                                <input type="text" className="form-control" placeholder="Nombre" defaultValue={this.state.heroe.nombre} ref={this.nombreRef} name="nombre" required />
                             </div>
                             {/* Poder */}
                             <div className="form-group">
                                 <label>Poder</label>
-                                <input type="text" className="form-control" placeholder="Poder" defaultValue={datosHeroe.poder} ref={this.poderRef} name="poder" />
+                                <input type="text" className="form-control" placeholder="Poder" defaultValue={this.state.heroe.poder} ref={this.poderRef} name="poder" />
                             </div>
                             {/* Estado */}
                             <div className="form-group">
                                 <label>Estado</label>
                                 <br></br>
-                                {this.state.estadoDato &&
-                                    <button onClick={this.cambiarEstado} className="btn btn-outline-success w-25 mr-2" type="button" title="Vivo" defaultValue={datosHeroe.estado} ref={this.estadoRef}><FontAwesomeIcon icon="thumbs-up" title="Vivo" /> Vivo </button>                                   
+                                {this.state.heroe.estado &&
+                                    <button onClick={this.cambiarEstado} className="btn btn-outline-success w-25 mr-2" type="button" title="Vivo" defaultValue={this.state.heroe.estado} ref={this.estadoRef}><FontAwesomeIcon icon="thumbs-up" title="Vivo" /> Vivo </button>                                   
                                 }
-                                {!this.state.estadoDato &&
-                                    <button onClick={this.cambiarEstado} className="btn btn-outline-danger w-25 ml-2" type="button" title="Muerto" defaultValue={datosHeroe.estado} ref={this.estadoRef}><FontAwesomeIcon icon="thumbs-down" title="Muerto" /> Muerto </button>
+                                {!this.state.heroe.estado &&
+                                    <button onClick={this.cambiarEstado} className="btn btn-outline-danger w-25 ml-2" type="button" title="Muerto" defaultValue={this.state.heroe.estado} ref={this.estadoRef}><FontAwesomeIcon icon="thumbs-down" title="Muerto" /> Muerto </button>
                                 }                                
                             </div>
                             <hr></hr>

@@ -108,8 +108,10 @@ class HeroeComponent extends Component{
 
         // Si el id de heroe esta relleno, actualizamos, sino escribimos
         if(this.heroeId !== 'nuevo'){
+
             // Rellena el state con los datos del formulario
             this.cambiarState(this.state.heroe);
+
             axios.put(this.endpoint + '/heroes/' + this.heroeId + '.json', this.state.heroe)
             .then( res => {
                 if(res.data){
@@ -132,14 +134,16 @@ class HeroeComponent extends Component{
             axios.post(this.endpoint + '/heroes.json', this.state.heroe)
                 .then( res => {
                 if(res.data){
+                    this.setState({
+                        status: 'success'
+                    }); 
+
                     // Popup de confirmacion
                     swal(
                         'Heroe Creado',
                         'El Heroe ha sido creado correctamente.',
                         'success'
                     );
-                    // Redireccionamos a Inicio una vez guardado
-                    this.$router.push('/heroes');                    
                 }
             })
             .catch(err => {

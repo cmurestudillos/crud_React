@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // Peticiones Http
 import axios from 'axios';
 // EndPoint
-import global from '../../conf/global';
+import global from '../../conf/key.js';
 // Modelo para Heroe
 import HeroeModel from '../../models/Heroe.js';
 // Popup

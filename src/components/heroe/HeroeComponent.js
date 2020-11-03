@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // Peticiones Http
 import axios from 'axios';
 // EndPoint
-import global from '../../conf/global.js';
+import global from '../../conf/key.js';
 // Popup de alerta
 import swal from 'sweetalert';
 // Modelo para Heroe
@@ -52,7 +52,7 @@ class HeroeComponent extends Component{
             }
         });
 
-        console.log(this.state.heroe);
+        //console.log(this.state.heroe);
     };  
     //----------------------------------------------------------------------------------//
     // Metodo para cambiar el estado de boton Vivo/Muerto                               //
@@ -131,7 +131,6 @@ class HeroeComponent extends Component{
                 console.log(err); 
             });
         }else{
-            debugger  
             // Rellena el state con los datos del formulario
             this.cambiarState(this.state.heroe);    
 

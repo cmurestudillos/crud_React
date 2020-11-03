@@ -131,6 +131,10 @@ class HeroeComponent extends Component{
                 console.log(err); 
             });
         }else{
+            debugger  
+            // Rellena el state con los datos del formulario
+            this.cambiarState(this.state.heroe);    
+
             axios.post(this.endpoint + '/heroes.json', this.state.heroe)
                 .then( res => {
                 if(res.data){
